@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: multi-tenant-deploy-dispatcher
+  cloud:
+    aws:
+      static:
+        region: us-east-1
+      stack:
+        name: localstack
+        sts:
+          enabled: true
+          role-arn: arn:aws:iam::000000000000:role/multi-tenant-deployment-master-role
+      endpoint: http://localhost:4566
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    properties:
+      security.protocol: PLAINTEXT
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+    consumer:
+      group-id: multi-tenant-deployment-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+
+  config:
+    import: aws-secretsmanager:/secrets/tenflo/master/multi-tenant-deployment
